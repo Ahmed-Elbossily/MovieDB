@@ -1,9 +1,16 @@
 package com.ahmedelbossily.moviedb.details;
 
 import com.ahmedelbossily.moviedb.Movie;
+import com.ahmedelbossily.moviedb.Review;
+import com.ahmedelbossily.moviedb.Video;
 import com.ahmedelbossily.moviedb.favorites.FavoritesInteractor;
+import com.ahmedelbossily.moviedb.util.RxUtils;
 
+import java.util.List;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by AhmedElbossily on 28/02/2018.
@@ -24,17 +31,20 @@ public class MovieDetailsPresenterImpl implements MovieDetailsPresenter {
 
     @Override
     public void setView(MovieDetailsView view) {
-
+        this.view = view;
     }
 
     @Override
     public void destroy() {
-
+        view = null;
+        RxUtils.unsubscribe(trailersSubscription, reviewSubscription);
     }
 
     @Override
     public void showDetails(Movie movie) {
-
+        if (isViewAttached()) {
+            view.showDetails(movie);
+        }
     }
 
     private boolean isViewAttached() {
@@ -43,21 +53,63 @@ public class MovieDetailsPresenterImpl implements MovieDetailsPresenter {
 
     @Override
     public void showTrailers(Movie movie) {
+        trailersSubscription = movieDetailsInteractor.getTrailers(movie.getId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onGetTrailersSuccess, t -> onGetTrailersFailure());
+    }
+
+    private void onGetTrailersSuccess(List<Video> videos) {
+        if (isViewAttached()) {
+            view.showTrailers(videos);
+        }
+    }
+
+    private void onGetTrailersFailure() {
 
     }
 
     @Override
     public void showReviews(Movie movie) {
+        reviewSubscription = movieDetailsInteractor.getReviews(movie.getId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onGetReviewsSuccess, t -> onGetReviewsFailure());
+    }
+
+    private void onGetReviewsSuccess(List<Review> reviews) {
+        if (isViewAttached()) {
+            view.showReviews(reviews);
+        }
+    }
+
+    private void onGetReviewsFailure() {
 
     }
 
     @Override
     public void showFavoriteButton(Movie movie) {
-
+        boolean isFavorite = favoritesInteractor.isFavorite(movie.getId());
+        if (isViewAttached()) {
+            if (isFavorite) {
+                view.showFavorited();
+            } else {
+                view.showUnFavorited();
+            }
+        }
     }
 
     @Override
     public void onFavoriteClick(Movie movie) {
-
+        if (isViewAttached()) {
+            boolean isFavorite = favoritesInteractor.isFavorite(movie.getId());
+            if (isFavorite) {
+                favoritesInteractor.unFavorite(movie.getId());
+                view.showUnFavorited();
+            } else {
+                favoritesInteractor.setFavorite(movie);
+                view.showFavorited();
+            }
+        }
     }
 }

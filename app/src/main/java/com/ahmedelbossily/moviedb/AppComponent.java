@@ -1,5 +1,7 @@
 package com.ahmedelbossily.moviedb;
 
+import com.ahmedelbossily.moviedb.details.DetailsComponent;
+import com.ahmedelbossily.moviedb.details.DetailsModule;
 import com.ahmedelbossily.moviedb.favorites.FavoritesModule;
 import com.ahmedelbossily.moviedb.listing.ListingComponent;
 import com.ahmedelbossily.moviedb.listing.ListingModule;
@@ -18,9 +20,8 @@ import dagger.Component;
         AppModule.class,
         NetworkModule.class,
         FavoritesModule.class})
-public interface AppComponent
-{
-    //DetailsComponent plus(DetailsModule detailsModule);
+public interface AppComponent {
 
+    DetailsComponent plus(DetailsModule detailsModule);
     ListingComponent plus(ListingModule listingModule);
 }

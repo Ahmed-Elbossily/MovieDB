@@ -68,6 +68,7 @@ public class MoviesListingAdapter extends RecyclerView.Adapter<MoviesListingAdap
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
         View rootView = LayoutInflater.from(context).inflate(R.layout.movie_grid_item, parent, false);
+
         return new ViewHolder(rootView);
     }
 
