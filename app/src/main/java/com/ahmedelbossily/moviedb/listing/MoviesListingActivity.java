@@ -7,6 +7,8 @@ import com.ahmedelbossily.moviedb.R;
 
 public class MoviesListingActivity extends AppCompatActivity {
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

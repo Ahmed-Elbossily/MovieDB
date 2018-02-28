@@ -16,6 +16,7 @@
         android:contentDescription="@string/movie_poster"/>
 
     <View
+        android:id="@+id/title_background"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_gravity="bottom"
